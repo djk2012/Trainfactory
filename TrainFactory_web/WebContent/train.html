@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+ <head>
+	<meta charset="UTF-8">
+	<title>Creating trains</title>
+     <link rel="stylesheet" href="timePicker.css"/>
+	<style type="text/css">
+        *{margin:0;padding:0}
+        .trains{
+            margin-left:300px;
+            padding:10px;
+            height:360px;
+            border:1px solid #999;
+        }
+        .ele{
+            float:left;
+            width:278px;
+            border:1px dashed #ccc;
+            height:360px;
+            padding:10px;
+            border-right:none
+        }
+        .circle0{
+            width:49px;
+            height:49px;
+            border:1px solid #999;
+            position: absolute;
+            top:60px;
+            border-radius: 50%;
+            cursor:move
+        }
+        .square0{
+            width:59px;
+            height:49px;
+            border:1px solid #999;
+            position: absolute;
+            top:130px;
+        }
+        .circle_clone{
+            width:49px;
+            height:49px;
+            border:1px solid #999;
+            position: absolute;
+            top:60px;
+            border-radius: 50%;
+            display: none;
+            z-index:3;
+        }
+        .circle_s{
+            width:29px;
+            display: inline-block;
+            height:29px;
+            border:1px solid #999;
+            border-radius: 50%;
+            position: relative;
+            top:8px;
+            margin-left:9px;
+        }
+        .square_s{
+            display: inline-block;
+            width:39px;
+            height:29px;
+            border:1px solid #999;
+            position: relative;
+            top:15px;
+            margin-left:9px;
+        }
+        .square_clone{
+            width:59px;
+            height:49px;
+            border:1px solid #999;
+            position: absolute;
+            top:130px;
+            display: none;
+            z-index:3;
+        }
+        .circle_t{
+            position: absolute;
+            top:21px;
+        }
+        .line{
+            height:100px;
+            border-bottom: 1px dotted #999;
+            padding-left:30px;
+            padding-top: 20px;
+            position: relative;
+        }
+        .line:last-child{border-bottom: none}
+        .line>div{float:left;}
+        .line .link{
+            width:10px;
+            background-color: #333;
+            height:2px;
+            margin-top:24px;
+        }
+        .line .s{
+            width:59px;
+            height:49px;
+            border:1px solid #999;
+        }
+        .line .c{
+            width:49px;
+            height:49px;
+            border:1px solid #999;
+            border-radius: 50%;;
+        }
+        .line a{
+            color:#999;
+            font-size: 12px;
+            position: absolute;
+            bottom: 10px;
+            left:16px;
+            text-decoration: none;
+        }
+        .line .date{
+            color:#999;
+            font-size: 12px;
+            position: absolute;
+            bottom: 10px;
+
+        }
+        .line .date1{left:160px;}
+        .line .date2{left:320px;}
+        .line a:hover{color:#333}
+        .mask{
+            position: fixed;
+            top:0;
+            width:100%;
+            left:0;
+            z-index:9;
+            background-color: rgba(0,0,0,.4);
+            height:100%;
+            display:none
+        }
+        .box_time{
+            width:250px;
+            padding:30px;
+            background-color: #fff;
+            box-shadow:  0 0 9px #666;
+            margin:120px auto 0;
+            position: relative;
+        }
+        .timePicker{
+            width:240px;
+            padding-left:6px;
+            margin-top:24px ;
+            height:30px;
+            outline: none;
+        }
+        #sure{
+            width:248px;
+            background-color: #388bff;
+            color:#fff;
+            text-decoration: none;
+            text-align: center;
+            height:32px;
+            line-height: 32px;;
+            margin:24px 0 15px;
+            display:block;
+        }
+        #x{
+            position: absolute;
+            top:6px;
+            right: 12px;
+            color:#999;
+            text-decoration: none;
+        }
+        .cal{
+            float:left;
+            display: inline-block;
+            width:120px;
+            font-size: 12px;
+            text-align: center;
+            margin-top:21px;
+            background-color: #666;
+            color:#fff;
+            height:30px;
+            line-height: 30px;
+            margin-left: 90px;
+            text-decoration: none;
+        }
+		.data_box{float:left;width:530px;border:1px dashed #ccc;margin-left:21px;padding:12px;}
+	</style>
+</head>
+<body>
+	<div class="ele" id="ele">
+        <p>Train Elements:</p>
+        <div class="circle0" id="circle"></div>
+        <div class="square0" id="square"></div>
+        <div id="circle2" class="circle_clone"></div>
+        <div id="square2" class="square_clone"></div>
+    </div>
+    <div class="trains" id="train">
+        <div class="line">
+            <a href="javascript:">Setting time</a>
+            <span class="date date1">Arrival time：<span></span></span>
+            <span class="date date2">Depature time：<span></span></span>
+        </div>
+        <div class="line"><a href="javascript:">Setting time</a>
+            <span class="date date1">Arrival time：<span></span></span>
+            <span class="date date2">Depature time：<span></span></span>
+        </div>
+        <div class="line"><a href="javascript:">Setting time</a>
+            <span class="date date1">Arrival time：<span></span></span>
+            <span class="date date2">Depature time：<span></span></span>
+        </div>
+    </div>
+    <div class="info" style="float:left;">
+        <span class="circle_s"></span> Represents locomotive;<br/>
+        <span class="square_s"></span> Represents carriage;<br/>
+    </div>
+    <a href="javascript:" class="cal">calculate tracks</a>
+	<div class="data_box"></div>
+    <div class="mask">
+        <div class="box_time">
+            <a href="javascript:" id="x">x</a>
+            <p>Setting arrival time and depature time：</p>
+            <input type="text" class="timePicker"  placeholder="Arrival time"  >
+            <input type="text" class="timePicker"  placeholder="Depature time"  >
+            <a href="javascript:" id="sure">Confirm</a>
+        </div>
+    </div>
+
+    <script src="jquery-1.8.3.min.js"></script>
+    <script src="jquery-timepicker.js"></script>
+    <script>
+        $(function(){
+            var input = $(".timePicker");
+            input.hunterTimePicker();
+
+            var circle =$("#circle");
+            var ele =$("#ele");
+            var square = $("#square");
+            var circle2 =$("#circle2");
+            var train = $("#train");
+            var square2 = $("#square2");
+            var num_circle = 0;
+            circle.mousedown(function (e) {
+                var event1 = window.event || e;
+
+                var startX = event1.clientX;
+                var startY = event1.clientY;
+                var circle_clone =  circle2.clone();
+
+                circle_clone.attr("id" ,"aaa");
+                ele.append(circle_clone);
+
+                circle_clone.css("borderColor" , "rgb("+Math.floor(Math.random()*255)+","+ Math.floor(Math.random()*255)+","+Math.floor(Math.random()*255)+")");
+                document.onmousemove = function (j) {
+                    var event2 = window.event || j;
+
+                    var endX = event2.clientX;
+                    var endY = event2.clientY;
+                    circle_clone.fadeIn();
+
+                    circle_clone.css("left" , circle_clone[0].offsetLeft + (endX - startX) );
+                    circle_clone.css("top" ,circle_clone[0].offsetTop + (endY - startY) );
+
+
+                    startX = endX;
+                    startY = endY;
+
+                };
+
+                circle_clone.mouseup (function () {
+                    var t = $(this);
+                    var box='<div class="c"></div>';
+                    document.onmousemove = null;
+                    console.log(t.css("left"));
+                    if(parseInt(t.css("top"))<350&&parseInt(t.css("left"))>300){
+                        if(parseInt(circle_clone.css("top"))<100) {
+                            var li = $(".line").first();
+                            if(li.children().is(".c")){
+                                alert("Can't creat two locomotive in the same train");
+                                t.remove();
+                            }else{
+                                li.prepend(box);
+                                t.remove();
+
+                            }
+                        }else if(parseInt(t.css("top"))>100&&parseInt(t.css("top"))<220){
+                            var li2 = $(".line").eq(1);
+                            if(li2.children().is(".c")){
+                                alert("Can't creat two locomotive in the same train");
+                                t.remove();
+                            }else{
+                                li2.prepend(box);
+                                t.remove();
+
+                            }
+                        }else{
+                            var li3 = $(".line").eq(2);
+                            if(li3.children().is(".c")){
+                                alert("Can't creat two locomotive in the same train");
+                                t.remove();
+                            }else{
+                                li3.prepend(box);
+                                t.remove();
+
+                            }
+                        }
+                    }else{
+                        t.remove();
+                    }
+
+
+                });
+
+            });
+//draggable carriage
+
+            square.mousedown(function (e) {
+                var event1 = window.event || e;
+
+                var startX = event1.clientX;
+                var startY = event1.clientY;
+                var square_clone =  square2.clone();
+
+                square_clone.attr("id" ,"aaa");
+                ele.append(square_clone);
+
+                document.onmousemove = function (j) {
+                    var event2 = window.event || j;
+
+                    var endX = event2.clientX;
+                    var endY = event2.clientY;
+                    square_clone.fadeIn();
+
+                    square_clone.css("left" , square_clone[0].offsetLeft + (endX - startX) );
+                    square_clone.css("top" ,square_clone[0].offsetTop + (endY - startY) );
+
+
+                    startX = endX;
+                    startY = endY;
+
+
+                };
+
+                square_clone.mouseup (function () {
+                    document.onmousemove = null;
+                    var t = $(this);
+                    var box = "<div class='link'></div><div class='s'></div>";
+                    if(parseInt(t.css("top"))<350&&parseInt(t.css("left"))>300){
+                        if(parseInt(t.css("top"))<100) {
+                            $(".line").first().append(box);
+                            t.remove();
+                        }else if(parseInt(t.css("top"))>100&&parseInt(t.css("top"))<220){
+                            $(".line").eq(1).append(box);
+                            t.remove();
+                        }else{
+                            $(".line").eq(2).append(box);
+                            t.remove();
+                        }
+                    }else{
+                        t.remove();
+                    }
+                });
+
+            });
+
+
+
+//general operation
+            var mask = $(".mask");
+            var x = $("#x");
+            var flag =1;
+            $(".line a").click(function(){
+                var t = $(this);
+                var i =t.parent().index();
+                mask.fadeIn();
+                mask.find("a").attr("data-val",i);
+            });
+            x.click(function(){
+                mask.fadeOut();
+            });
+            $("#sure").click(function(){
+                var t = $(this);
+                input.each(function(){
+                    if($(this).val().length == 0){
+                        flag = 0;
+                    }else{
+                        flag =1;
+                    }
+                });
+                if(flag==0){
+                    alert("Please input two time's tables")
+                }else{
+                    var j = parseInt(t.attr("data-val"));
+                    $('.line').eq(j).children(".date1").children("span").text(input.first().val());
+                    $('.line').eq(j).children(".date2").children("span").text(input.last().val());
+                    mask.fadeOut();
+                }
+            });
+//check is crash or not
+            function isCrash (obj1,obj2) {
+                var boolCrash = true;
+
+                var left1 = obj1.offsetLeft;
+
+                var right1 = obj1.offsetLeft + obj1.offsetWidth;
+
+                var top1 = obj1.offsetTop;
+
+                var bottom1 = obj1.offsetTop + obj1.offsetHeight;
+
+                var left2 = obj2.offsetLeft;
+
+                var right2 = obj2.offsetLeft + obj2.offsetWidth;
+
+                var top2 = obj2.offsetTop;
+
+                var bottom2 = obj2.offsetTop + obj2.offsetHeight;
+
+
+                if (right1 > left2 && left1 < right2 && bottom1 > top2 && top1 < bottom2) {
+                    boolCrash = true;
+                } else{
+                    boolCrash = false;
+                }
+                return boolCrash;
+            }
+//calculate tracks 
+			var data_box =$(".data_box");
+			$(".cal").click(function(){
+			var str = "";
+			var arrive_time=[];
+			var depature_time=[];			
+				$(".line").each(function(){
+					var t = $(this);
+					str+="["+t.index()+","+t.children(".s").length+","+t.children(".date1").children().text()+","+t.children(".date2").children().text()+"]<br/>";
+					arrive_time[t.index()]=t.children(".date1").children().text();
+					depature_time[t.index()]=t.children(".date2").children().text();
+				})				
+				alert("The minimum number of tracks is: "+calculate_Mini_Tracks(arrive_time,depature_time));
+			})
+			
+			function time_Compare(first_Time, second_Time){		
+		            var first_time_Arr=first_Time.split(":");
+					var second_time_Arr=second_Time.split(":");
+					var first_Min = (parseInt(first_time_Arr[0]) * 60 + parseInt(first_time_Arr[1]));
+					var second_Min = (parseInt(second_time_Arr[0]) * 60 + parseInt(second_time_Arr[1]));
+					if(first_Min>=second_Min){
+							return 1;
+					}else{
+					        return 0;
+					}	
+			}					
+			function calculate_Mini_Tracks(arrive_time,depature_time){			
+			        var index=0;
+					var mini_tracks=1;
+					var pivot_arrive_time;
+					var pivot_departure_time;
+					while(index<arrive_time.length){
+							if(index==0){
+							   pivot_arrive_time=arrive_time[index];
+							   pivot_departure_time=depature_time[index];		
+							   index++;
+							}else{										
+									if(time_Compare(arrive_time[index],pivot_arrive_time) == 1 && time_Compare(pivot_departure_time,arrive_time[index])== 1 && time_Compare(depature_time[index],pivot_departure_time)== 1){
+											pivot_arrive_time=arrive_time[index];
+											pivot_departure_time=pivot_departure_time;
+											mini_tracks++;
+											index++;	
+									
+									}else if(time_Compare(arrive_time[index],pivot_arrive_time) == 1 && time_Compare(pivot_departure_time,arrive_time[index]) == 1 && time_Compare(depature_time[index],pivot_departure_time) == 0 ){
+											pivot_arrive_time=arrive_time[index];
+											pivot_departure_time=depature_time[index];
+											mini_tracks++;
+											index++;	
+									
+									}else{
+									    	pivot_arrive_time=arrive_time[index];
+											pivot_departure_time=depature_time[index];
+											index++;
+									}							
+							}					
+					}
+			        return mini_tracks;
+			}
+
+
+        });
+
+    </script>
+</body>
+</html>
